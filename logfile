@@ -1,0 +1,62 @@
+2025-11-20 14:38:05.175 IST [1893452] LOG:  starting PostgreSQL 14.19 (Ubuntu 14.19-0ubuntu0.22.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.2) 11.4.0, 64-bit
+2025-11-20 14:38:05.175 IST [1893452] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2025-11-20 14:38:05.175 IST [1893452] HINT:  Is another postmaster already running on port 5433? If not, wait a few seconds and retry.
+2025-11-20 14:38:05.175 IST [1893452] WARNING:  could not create listen socket for "localhost"
+2025-11-20 14:38:05.175 IST [1893452] FATAL:  could not create any TCP/IP sockets
+2025-11-20 14:38:05.176 IST [1893452] LOG:  database system is shut down
+2025-11-20 14:38:23.495 IST [1894058] LOG:  starting PostgreSQL 14.19 (Ubuntu 14.19-0ubuntu0.22.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.2) 11.4.0, 64-bit
+2025-11-20 14:38:23.495 IST [1894058] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2025-11-20 14:38:23.495 IST [1894058] HINT:  Is another postmaster already running on port 5434? If not, wait a few seconds and retry.
+2025-11-20 14:38:23.495 IST [1894058] WARNING:  could not create listen socket for "localhost"
+2025-11-20 14:38:23.495 IST [1894058] FATAL:  could not create any TCP/IP sockets
+2025-11-20 14:38:23.496 IST [1894058] LOG:  database system is shut down
+2025-11-20 14:38:57.672 IST [1894841] LOG:  starting PostgreSQL 14.19 (Ubuntu 14.19-0ubuntu0.22.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.2) 11.4.0, 64-bit
+2025-11-20 14:38:57.672 IST [1894841] LOG:  listening on IPv4 address "127.0.0.1", port 5440
+2025-11-20 14:38:57.674 IST [1894841] FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5440.lock": Permission denied
+2025-11-20 14:38:57.675 IST [1894841] LOG:  database system is shut down
+2025-11-20 14:39:38.223 IST [1896166] LOG:  starting PostgreSQL 14.19 (Ubuntu 14.19-0ubuntu0.22.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.2) 11.4.0, 64-bit
+2025-11-20 14:39:38.223 IST [1896166] LOG:  listening on IPv4 address "127.0.0.1", port 5440
+2025-11-20 14:39:38.225 IST [1896166] LOG:  listening on Unix socket "/DATA3/jainendra/ServerOTP/jayantslist_backend/sockets/.s.PGSQL.5440"
+2025-11-20 14:39:38.229 IST [1896167] LOG:  database system was shut down at 2025-11-20 14:37:52 IST
+2025-11-20 14:39:38.236 IST [1896166] LOG:  database system is ready to accept connections
+2025-11-21 16:17:14.162 IST [337945] ERROR:  update or delete on table "sellers" violates foreign key constraint "seller_posts_seller_id_fkey" on table "seller_posts"
+2025-11-21 16:17:14.162 IST [337945] DETAIL:  Key (id)=(1) is still referenced from table "seller_posts".
+2025-11-21 16:17:14.162 IST [337945] STATEMENT:  DELETE FROM "sellers"
+2025-11-21 17:25:21.976 IST [444108] ERROR:  invalid input syntax for type bigint: "NaN"
+2025-11-21 17:25:21.976 IST [444108] CONTEXT:  unnamed portal parameter $1 = '...'
+2025-11-21 17:25:21.976 IST [444108] STATEMENT:  SELECT * FROM artisans ORDER BY id LIMIT $1 OFFSET $2
+2025-11-21 19:59:09.178 IST [681393] ERROR:  missing FROM-clause entry for table "SellerServiceLocations" at character 269
+2025-11-21 19:59:09.178 IST [681393] STATEMENT:  SELECT "SellerServiceLocation"."id", "SellerServiceLocation"."seller_service_id", "SellerServiceLocation"."latitude", "SellerServiceLocation"."longitude", "SellerServiceLocation"."created_at", 
+	        6371 * acos(
+	            cos(radians(12.9716)) * cos(radians(CAST("SellerServiceLocations"."latitude" AS DOUBLE PRECISION))) *
+	            cos(radians(CAST("SellerServiceLocations"."longitude" AS DOUBLE PRECISION)) - radians(77.5946)) +
+	            sin(radians(12.9716)) * sin(radians(CAST("SellerServiceLocations"."latitude" AS DOUBLE PRECISION)))
+	        )
+	     AS "distance", "SellerService"."id" AS "SellerService.id", "SellerService"."name" AS "SellerService.name", "SellerService"."description" AS "SellerService.description", "SellerService"."seller_id" AS "SellerService.seller_id", "SellerService"."co_ordinates" AS "SellerService.co_ordinates", "SellerService"."category_id" AS "SellerService.category_id", "SellerService->Seller"."id" AS "SellerService.Seller.id", "SellerService->Seller"."user_account_id" AS "SellerService.Seller.user_account_id", "SellerService->Seller"."fullname" AS "SellerService.Seller.fullname", "SellerService->Seller"."created_at" AS "SellerService.Seller.created_at", "SellerService->Seller"."updated_at" AS "SellerService.Seller.updated_at", "SellerService->Seller->UserAccount"."fullname" AS "SellerService.Seller.UserAccount.fullname", "SellerService->Seller->UserAccount"."mobile" AS "SellerService.Seller.UserAccount.mobile", "SellerService->Seller->UserAccount"."id" AS "SellerService.Seller.UserAccount.id" FROM "seller_service_locations" AS "SellerServiceLocation" INNER JOIN "seller_services" AS "SellerService" ON "SellerServiceLocation"."seller_service_id" = "SellerService"."id" INNER JOIN "sellers" AS "SellerService->Seller" ON "SellerService"."seller_id" = "SellerService->Seller"."id" LEFT OUTER JOIN "user_accounts" AS "SellerService->Seller->UserAccount" ON "SellerService->Seller"."user_account_id" = "SellerService->Seller->UserAccount"."id" WHERE 
+	        6371 * acos(
+	            cos(radians(12.9716)) * cos(radians(CAST("SellerServiceLocations"."latitude" AS DOUBLE PRECISION))) *
+	            cos(radians(CAST("SellerServiceLocations"."longitude" AS DOUBLE PRECISION)) - radians(77.5946)) +
+	            sin(radians(12.9716)) * sin(radians(CAST("SellerServiceLocations"."latitude" AS DOUBLE PRECISION)))
+	        )
+	     <= 50 ORDER BY "distance";
+2025-11-21 19:59:49.608 IST [682555] ERROR:  missing FROM-clause entry for table "SellerServiceLocation" at character 472
+2025-11-21 19:59:49.608 IST [682555] STATEMENT:  SELECT "Category"."id", "Category"."name", "Category"."parent_id", "Category"."hcode", COUNT("SellerServices"."id") AS "seller_count" FROM "categories" AS "Category" LEFT OUTER JOIN ( "seller_services" AS "SellerServices" INNER JOIN "seller_service_locations" AS "SellerServices->SellerServiceLocations" ON "SellerServices"."id" = "SellerServices->SellerServiceLocations"."seller_service_id" AND 
+	        6371 * acos(
+	            cos(radians(12.9716)) * cos(radians(CAST("SellerServiceLocation"."latitude" AS DOUBLE PRECISION))) *
+	            cos(radians(CAST("SellerServiceLocation"."longitude" AS DOUBLE PRECISION)) - radians(77.5946)) +
+	            sin(radians(12.9716)) * sin(radians(CAST("SellerServiceLocation"."latitude" AS DOUBLE PRECISION)))
+	        )
+	     <= 50 ) ON "Category"."id" = "SellerServices"."category_id" GROUP BY "Category"."id" HAVING COUNT("SellerServices"."id") > 0;
+2025-11-23 12:09:40.374 IST [13149] ERROR:  column "createdAt" does not exist at character 26
+2025-11-23 12:09:40.374 IST [13149] HINT:  Perhaps you meant to reference the column "UserAccount.created_at".
+2025-11-23 12:09:40.374 IST [13149] STATEMENT:  SELECT "id", "fullname", "createdAt", "updatedAt" FROM "user_accounts" AS "UserAccount" WHERE "UserAccount"."source" = 'VISHWAKARMA' ORDER BY "UserAccount"."createdAt" DESC LIMIT 1;
+2025-11-23 12:10:00.780 IST [13576] ERROR:  column "artisanId" does not exist at character 8
+2025-11-23 12:10:00.780 IST [13576] HINT:  Perhaps you meant to reference the column "Artisan.artisan_id".
+2025-11-23 12:10:00.780 IST [13576] STATEMENT:  SELECT "artisanId", "artisanName", "createdAt", "updatedAt" FROM "artisans" AS "Artisan" ORDER BY "Artisan"."createdAt" DESC LIMIT 1;
+2025-11-23 12:10:17.700 IST [14304] ERROR:  column "artisanId" does not exist at character 8
+2025-11-23 12:10:17.700 IST [14304] HINT:  Perhaps you meant to reference the column "Artisan.artisan_id".
+2025-11-23 12:10:17.700 IST [14304] STATEMENT:  SELECT "artisanId", "artisanName", "contactNo", "contactEmail", "district", "lattitude", "longitude", "serviceCategory", "createdAt", "updatedAt" FROM "artisans" AS "Artisan" ORDER BY "Artisan"."createdAt" DESC LIMIT 1;
+2025-11-23 12:32:51.374 IST [49614] ERROR:  column "updated_at" does not exist at character 241
+2025-11-23 12:32:51.374 IST [49614] HINT:  Perhaps you meant to reference the column "Artisan.created_at".
+2025-11-23 12:32:51.374 IST [49614] STATEMENT:  SELECT "artisan_id" AS "artisanId", "artisan_name" AS "artisanName", "contact_no" AS "contactNo", "contact_email" AS "contactEmail", "district", "latitude" AS "lattitude", "longitude", "service_category" AS "serviceCategory", "created_at", "updated_at" FROM "artisans" AS "Artisan" WHERE ("Artisan"."createdAt" >= '2025-11-20 00:00:00.000 +00:00' AND "Artisan"."createdAt" < '2025-11-21 00:00:00.000 +00:00');
+2025-11-24 14:58:57.656 IST [2384387] FATAL:  role "postgres" does not exist
