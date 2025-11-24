@@ -1,0 +1,14 @@
+[
+  {
+    "date": "2025-11-21",
+    "fetch_start_time": "2025-11-24T11:43:04.995Z",
+    "fetch_end_time": "2025-11-24T11:43:07.138Z",
+    "duration_seconds": 2.14,
+    "success": true,
+    "records_inserted": 0,
+    "records_updated": 0,
+    "total_records_affected": 0,
+    "error": null,
+    "timestamp": "2025-11-24T11:43:07.138Z"
+  }
+]

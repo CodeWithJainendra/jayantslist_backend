@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const pool = require('./db_config');
 const apiRoutes = require('./routes/api');
+const vishwakarmaLogsRoutes = require('./routes/vishwakarmaLogs');
 const startCronJobs = require('./jobs/cron');
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes with base path for reverse proxy
 app.use('/jayants-list-api/api', apiRoutes);
+app.use('/jayants-list-api/api/vishwakarma/logs', vishwakarmaLogsRoutes);
 
 // Health Check with base path
 app.get('/jayants-list-api/', (req, res) => {
@@ -23,6 +25,7 @@ app.get('/jayants-list-api/', (req, res) => {
 
 // Also support direct access without base path (for local testing)
 app.use('/api', apiRoutes);
+app.use('/api/vishwakarma/logs', vishwakarmaLogsRoutes);
 app.get('/', (req, res) => {
     res.send('Jayantslist Backend API is running');
 });

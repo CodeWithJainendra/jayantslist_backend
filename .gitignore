@@ -4,3 +4,4 @@ postgres_data/
 postgres_data/
 *.csv
 *.sql
+.env

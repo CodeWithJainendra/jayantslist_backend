@@ -1,5 +1,6 @@
 const axios = require('axios');
 const pool = require('../db_config');
+const dataFetchLogger = require('./dataFetchLogger');
 require('dotenv').config();
 
 const BASE_URL = process.env.VISHWAKARMA_BASE_URL || 'https://devupsicapi.psweb.in';
@@ -181,8 +182,12 @@ async function saveArtisansToDB(artisans) {
     return { inserted: insertedCount, updated: updatedCount };
 }
 
-async function syncArtisansByDate(date) {
+async function syncArtisansByDate(date, triggeredBy = 'MANUAL') {
     console.log(`Starting Artisan Sync for Date: ${date}`);
+
+    // Start logging session
+    await dataFetchLogger.startSession(date, triggeredBy);
+
     try {
         const token = await authenticate();
         let page = 1;
@@ -192,6 +197,10 @@ async function syncArtisansByDate(date) {
 
         while (hasMoreData) {
             console.log(` Fetching page ${page} for date ${date}...`);
+
+            // Update logger with current page
+            dataFetchLogger.updatePageFetch(page);
+
             const artisans = await fetchArtisans(token, date, page);
 
             if (artisans.length === 0) {
@@ -205,16 +214,28 @@ async function syncArtisansByDate(date) {
 
             totalInserted += inserted;
             totalUpdated += updated;
+
+            // Update logger with record counts
+            dataFetchLogger.updateRecords(inserted, updated);
+
             console.log(`   Page ${page} done. New: ${inserted}, Updated: ${updated}`);
 
             page++;
         }
 
         console.log(`Sync completed for ${date}. Total New: ${totalInserted}, Total Updated: ${totalUpdated}`);
+
+        // End session with success
+        await dataFetchLogger.endSessionSuccess();
+
         return { success: true, date, inserted: totalInserted, updated: totalUpdated };
 
     } catch (error) {
         console.error(`Sync failed for date ${date}:`, error.message);
+
+        // End session with error
+        await dataFetchLogger.endSessionError(error);
+
         return { success: false, date, error: error.message };
     }
 }
@@ -226,11 +247,97 @@ async function syncArtisans() {
     const dateStr = yesterday.toISOString().split('T')[0]; // YYYY-MM-DD
 
     console.log(`Running Daily Sync for Yesterday: ${dateStr}`);
-    return await syncArtisansByDate(dateStr);
+    return await syncArtisansByDate(dateStr, 'CRON');
+}
+
+/**
+ * Pushes call statistics to Vishwakarma API for a specific date.
+ * @param {string} date - Date in YYYY-MM-DD format
+ */
+async function pushCallStatsToVishwakarma(date) {
+    console.log(`[PushStats] Starting push for date: ${date}`);
+    try {
+        // 1. Authenticate
+        const token = await authenticate();
+        console.log('[PushStats] Authenticated successfully');
+
+        // 2. Aggregate Call Data
+        // We need to count calls per ArtisanId (source_id) for the given date
+        // Join: UserAccountCall -> Seller -> UserAccount (where source='VISHWAKARMA')
+
+        const query = `
+            SELECT 
+                ua.source_id as "ArtisanId",
+                COUNT(uac.id) as "ReceiveCalls"
+            FROM user_account_calls uac
+            JOIN sellers s ON uac.seller_id = s.id
+            JOIN user_accounts ua ON s.user_account_id = ua.id
+            WHERE 
+                ua.source = 'VISHWAKARMA' 
+                AND ua.source_id IS NOT NULL
+                AND DATE(uac.created_at) = $1
+            GROUP BY ua.source_id
+        `;
+
+        // NOTE: 'pool' and 'axios' are assumed to be imported/defined elsewhere in the full file.
+        const result = await pool.query(query, [date]);
+        const stats = result.rows;
+
+        console.log(`[PushStats] Found ${stats.length} artisans with calls on ${date}`);
+
+        if (stats.length === 0) {
+            console.log('[PushStats] No data to push.');
+            return { success: true, message: 'No data to push', count: 0 };
+        }
+
+        // 3. Construct Payload
+        const payload = stats.map(row => ({
+            ArtisanId: row.ArtisanId,
+            ReceiveCalls: parseInt(row.ReceiveCalls),
+            date: date
+        }));
+
+        // 4. Send to API
+        // NOTE: 'BASE_URL' is assumed to be imported/defined elsewhere in the full file.
+        const pushUrl = `${BASE_URL}/api/IITKnpArtisanData/SaveIITKanpurArtisanCallDetail`;
+
+        // The API expects a list of objects
+        // Example: [{ "ArtisanId": "1", "ReceiveCalls": 15, "date": "2025-09-18" }]
+
+        console.log(`[PushStats] Sending ${payload.length} records to ${pushUrl}`);
+
+        const response = await axios.post(pushUrl, payload, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('[PushStats] API Response:', response.data);
+
+        return {
+            success: true,
+            message: 'Data pushed successfully',
+            count: payload.length,
+            apiResponse: response.data
+        };
+
+    } catch (error) {
+        console.error('[PushStats] Error:', error.message);
+        if (error.response) {
+            console.error('[PushStats] API Error Data:', error.response.data);
+        }
+        return {
+            success: false,
+            message: error.message,
+            error: error.response ? error.response.data : null
+        };
+    }
 }
 
 module.exports = {
     syncArtisans,
     syncArtisansByDate,
+    pushCallStatsToVishwakarma,
     saveArtisansToDB // Exported for testing
 };

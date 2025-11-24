@@ -48,4 +48,5 @@ router.get('/feeds', authenticateToken, mobileController.getFeeds);
 // 15. Create Post
 router.post('/sellers/posts', authenticateToken, mobileController.createPost);
 
+
 module.exports = router;
